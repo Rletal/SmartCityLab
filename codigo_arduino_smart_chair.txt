@@ -1,0 +1,52 @@
+#include <LiquidCrystal.h> 
+
+LiquidCrystal lcd(12, 11, 8, 7, 3, 2);
+
+float cm = 0;
+const float elasticidade = 2000.5;
+int cont = 0;
+float mt = 0.00;
+const float gravidade = 9.81;
+
+void setup() {
+  lcd.begin(16, 2);
+  Serial.begin(9600);
+}
+
+void loop() {
+  cm = 0.01723 * pegaDistancia(4, 5);
+  cm = map(cm, 4, 300, 100.00, 0.00);
+  mt = cm / 100;
+  float massa = (elasticidade * mt)/(gravidade);
+  lcd.print("    ");
+  lcd.print("Peso (KG)");
+  lcd.setCursor(0, 1);
+  lcd.print("    ");
+  lcd.print(massa);
+  lcd.print("             ");
+  limparLED(0);
+  Serial.println(massa);
+  delay(3000);
+}
+
+void limparLED(int n){
+  if(cont != n){
+    lcd.clear();
+    cont = n;
+  } else {
+    cont = n;
+  }
+}
+
+long pegaDistancia(int pinGatilho, int pinEcho)
+{
+  pinMode(pinGatilho, OUTPUT);
+  digitalWrite(pinGatilho, LOW);
+  delayMicroseconds(2);
+  digitalWrite(pinGatilho, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(pinGatilho, LOW);
+  pinMode(pinEcho, INPUT);
+  
+  return pulseIn(pinEcho, HIGH);
+}
